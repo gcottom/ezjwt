@@ -183,6 +183,7 @@ func TestCreateJWT(t *testing.T) {
 			// generate a private key that is invalid to provoke a signing error
 			// with ecdsa we generate an invalid key by using a bad curve
 			curve := elliptic.P256()
+			curve.Params().B = big.NewInt(0)
 			order := curve.Params().N
 			pk := new(ecdsa.PrivateKey)
 			pk.PublicKey.Curve = curve
