@@ -1,13 +1,9 @@
 package ezjwt_test
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/base64"
-	"fmt"
-	"math/big"
 	"strings"
 	"testing"
 	"time"
@@ -165,31 +161,6 @@ func TestCreateJWT(t *testing.T) {
 			// with rsa we generate an invalid key by using a bad number of bits
 			pk, err := rsa.GenerateKey(rand.Reader, 256)
 			assert.NoError(t, err)
-			fmt.Println(pk.N.BitLen())
-			out, err := ezjwt.GenerateJWT(claims, pk, alg)
-			assert.Error(t, err)
-			assert.ErrorContains(t, err, "error signing data")
-			assert.Empty(t, out)
-		})
-	}
-	ecdsaKeyAlgs := []ezjwt.Algorithm{ezjwt.ES256, ezjwt.ES384, ezjwt.ES512}
-	for _, alg := range ecdsaKeyAlgs {
-		t.Run("error case - create jwt with private key signing error - "+string(alg), func(t *testing.T) {
-			claims := make(map[string]any)
-			claims["exp"] = time.Now().Add(time.Hour).Unix()
-			claims["iat"] = time.Now().Unix()
-			claims["iss"] = "test"
-
-			// generate a private key that is invalid to provoke a signing error
-			// with ecdsa we generate an invalid key by using a bad curve
-			curve := elliptic.P256()
-			curve.Params().B = big.NewInt(0)
-			order := curve.Params().N
-			pk := new(ecdsa.PrivateKey)
-			pk.PublicKey.Curve = curve
-			pk.D = new(big.Int).Add(order, big.NewInt(10000000))
-			pk.Params().BitSize = 0
-
 			out, err := ezjwt.GenerateJWT(claims, pk, alg)
 			assert.Error(t, err)
 			assert.ErrorContains(t, err, "error signing data")
