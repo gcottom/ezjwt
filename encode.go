@@ -121,6 +121,9 @@ func generateSignature(data string, secret any, alg Algorithm) (string, error) {
 		if !ok {
 			return "", fmt.Errorf("invalid private key type")
 		}
+		if privateKey.N.BitLen() < 272 {
+			return "", errors.New("error signing data: private key bit length is too small")
+		}
 		hashed := sha256.Sum256([]byte(data))
 		signature, err = rsa.SignPSS(rand.Reader, privateKey, crypto.SHA256, hashed[:], nil)
 		if err != nil {
@@ -131,6 +134,9 @@ func generateSignature(data string, secret any, alg Algorithm) (string, error) {
 		if !ok {
 			return "", fmt.Errorf("invalid private key type")
 		}
+		if privateKey.N.BitLen() < 272 {
+			return "", errors.New("error signing data: private key bit length is too small")
+		}
 		hashed := sha512.Sum384([]byte(data))
 		signature, err = rsa.SignPSS(rand.Reader, privateKey, crypto.SHA384, hashed[:], nil)
 		if err != nil {
@@ -140,6 +146,9 @@ func generateSignature(data string, secret any, alg Algorithm) (string, error) {
 		privateKey, ok := secret.(*rsa.PrivateKey)
 		if !ok {
 			return "", fmt.Errorf("invalid private key type")
+		}
+		if privateKey.N.BitLen() < 272 {
+			return "", errors.New("error signing data: private key bit length is too small")
 		}
 		hashed := sha512.Sum512([]byte(data))
 		signature, err = rsa.SignPSS(rand.Reader, privateKey, crypto.SHA512, hashed[:], nil)

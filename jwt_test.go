@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/base64"
+	"fmt"
 	"math/big"
 	"strings"
 	"testing"
@@ -162,8 +163,9 @@ func TestCreateJWT(t *testing.T) {
 
 			// generate a private key that is invalid to provoke a signing error
 			// with rsa we generate an invalid key by using a bad number of bits
-			pk, err := rsa.GenerateKey(rand.Reader, 40)
+			pk, err := rsa.GenerateKey(rand.Reader, 256)
 			assert.NoError(t, err)
+			fmt.Println(pk.N.BitLen())
 			out, err := ezjwt.GenerateJWT(claims, pk, alg)
 			assert.Error(t, err)
 			assert.ErrorContains(t, err, "error signing data")
