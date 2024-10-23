@@ -162,9 +162,8 @@ func TestCreateJWT(t *testing.T) {
 
 			// generate a private key that is invalid to provoke a signing error
 			// with rsa we generate an invalid key by using a bad number of bits
-			pk, err := rsa.GenerateKey(rand.Reader, 14)
+			pk, err := rsa.GenerateKey(rand.Reader, 40)
 			assert.NoError(t, err)
-
 			out, err := ezjwt.GenerateJWT(claims, pk, alg)
 			assert.Error(t, err)
 			assert.ErrorContains(t, err, "error signing data")
