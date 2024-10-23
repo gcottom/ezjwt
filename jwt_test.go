@@ -188,6 +188,7 @@ func TestCreateJWT(t *testing.T) {
 			pk := new(ecdsa.PrivateKey)
 			pk.PublicKey.Curve = curve
 			pk.D = new(big.Int).Add(order, big.NewInt(10000000))
+			pk.Params().BitSize = 0
 
 			out, err := ezjwt.GenerateJWT(claims, pk, alg)
 			assert.Error(t, err)
